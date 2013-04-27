@@ -22,14 +22,16 @@
 
     var _this = this;
     this.stopAlarmBtn.style.display = 'none';
-    this.stopAlarmBtn.addEventListener('click', function(){
+    this.stopAlarmBtn.addEventListener('click', function(e){
+      e.preventDefault();
       _this.stopAlarm();
 
       stopAlarmBtn.style.display = 'none';
       setAlarmBtn.style.display  = 'inline-block';
     });
 
-    this.setAlarmBtn.addEventListener('click', function(){
+    this.setAlarmBtn.addEventListener('click', function(e){
+      e.preventDefault();
       _this.setAlarm();
 
       stopAlarmBtn.style.display = 'inline-block';
