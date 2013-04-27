@@ -8,6 +8,10 @@ body {
   font-size:  12px;
 }
 
+select.point {
+  width: 70px;
+}
+
 .logs {
   overflow: hidden;
 }
