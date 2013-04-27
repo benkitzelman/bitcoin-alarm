@@ -8,6 +8,20 @@ body {
   font-size:  12px;
 }
 
+select.facet {
+  width: 70px;
+}
+
+.threshold-value {
+  display: inline-block;
+}
+
+.logical-or {
+  margin:         20px 0;
+  font-weight:    bold;
+  font-style:     italic;
+}
+
 .logs {
   overflow: hidden;
 }

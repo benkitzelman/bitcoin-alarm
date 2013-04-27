@@ -1,41 +1,5 @@
   var TradeMonitor = function() {
 
-    this.loggingEnabled = false;
-    this.soundsEnabled  = false;
-
-    this.price = document.getElementById('price');
-    this.buy   = document.getElementById('buy');
-    this.sell  = document.getElementById('sell');
-    this.high  = document.getElementById('high');
-    this.last  = document.getElementById('last');
-    this.low   = document.getElementById('low');
-
-    this.depth  = document.getElementById('depth');
-    this.trades = document.getElementById('trades');
-
-    this.stopAlarmBtn = document.getElementById('stop_alarm_btn');
-    this.setAlarmBtn  = document.getElementById('set_alarm_btn');
-    this.sounds = {
-      profit: new Audio('assets/audio/profit.mp3'),
-      loss:   new Audio('assets/audio/loss.mp3')
-    };
-
-    var _this = this;
-    this.stopAlarmBtn.style.display = 'none';
-    this.stopAlarmBtn.addEventListener('click', function(){
-      _this.stopAlarm();
-
-      stopAlarmBtn.style.display = 'none';
-      setAlarmBtn.style.display  = 'inline-block';
-    });
-
-    this.setAlarmBtn.addEventListener('click', function(){
-      _this.setAlarm();
-
-      stopAlarmBtn.style.display = 'inline-block';
-      setAlarmBtn.style.display  = 'none';
-    });
-
     this.setAlarm = function() {
       this.soundsEnabled = true;
     };
@@ -58,9 +22,39 @@
       this.sounds[snd].play();
 
       this.sounds[snd].addEventListener('ended', this.loop = function() {
-          this.currentTime = 0;
-          this.play();
+        this.currentTime = 0;
+        this.play();
       }, false);
+    };
+
+    this.thresholds = function() {
+      var models = [];
+      this.thresholdViews.forEach(function(v) {
+        models.push(v.model);
+      });
+      return models;
+    };
+
+    this.viewFor = function(threshold) {
+      for(var i=0; i < this.thresholdViews.length; i++) {
+        var v = this.thresholdViews[i];
+        if(v.model == threshold) return v;
+      }
+    };
+
+    this.addThreshold = function() {
+      var container = document.getElementById('thresholds');
+      var p = new PriceThreshold(this, OPERATION.lte, new PricePoint('avg', 0));
+      var v = new ThresholdView(p);
+
+      this.thresholdViews.push(v);
+      if(container.children.length) {
+        var conjunction = document.createElement('div');
+        conjunction.className = 'logical-or control-group';
+        conjunction.innerHTML = 'OR'
+        container.appendChild(conjunction);
+      }
+      container.appendChild(v.render().el);
     };
 
     var logTo = function(logEl, title, message) {
@@ -117,23 +111,82 @@
         return '$' + amt.value + ' ' + amt.currency;
       };
 
-      alertIfNecessary(data.ticker);
-      this.price.innerHTML  = format(data.ticker.avg);
-      this.last.innerHTML   = format(data.ticker.last);
-      this.high.innerHTML   = format(data.ticker.high);
-      this.low.innerHTML    = format(data.ticker.low);
-      this.volume.innerHTML = data.ticker.vol.display;
-      this.buy.innerHTML    = format(data.ticker.buy);
-      this.sell.innerHTML   = format(data.ticker.sell);
+      this.ticker = data.ticker;
+      alertIfNecessary();
+      this.price.innerHTML  = format(this.ticker.avg);
+      this.last.innerHTML   = format(this.ticker.last);
+      this.high.innerHTML   = format(this.ticker.high);
+      this.low.innerHTML    = format(this.ticker.low);
+      this.volume.innerHTML = this.ticker.vol.display;
+      this.buy.innerHTML    = format(this.ticker.buy);
+      this.sell.innerHTML   = format(this.ticker.sell);
     };
 
-    var alertIfNecessary = function(ticker) {
-      var lossMarker   = parseFloat(document.getElementById('marker_loss').value);
-      var profitMarker = parseFloat(document.getElementById('marker_profit').value);
+    var alertIfNecessary = function() {
+      if(!this.isAlarmSet()) return;
+      var thresholds = this.thresholds();
 
-      if(lossMarker   >= ticker.avg.value) this.playSound('loss');
-      if(profitMarker <= ticker.avg.value) this.playSound('profit');
+      for(var i = 0; i < thresholds.length; i++) {
+        var t = thresholds[i];
+        if(t.isMet()) {
+          this.playSound('loss');
+          this.viewFor(t).highlight();
+          return;
+        }
+      }
     };
+
+    var bindToDom = function() {
+      var _this = this;
+      this.stopAlarmBtn.style.display = 'none';
+      this.stopAlarmBtn.addEventListener('click', function(e){
+        e.preventDefault();
+        _this.stopAlarm();
+
+        stopAlarmBtn.style.display = 'none';
+        setAlarmBtn.style.display  = 'inline-block';
+      });
+
+      this.setAlarmBtn.addEventListener('click', function(e){
+        e.preventDefault();
+        _this.setAlarm();
+
+        stopAlarmBtn.style.display = 'inline-block';
+        setAlarmBtn.style.display  = 'none';
+      });
+
+      this.addThresholdBtn.addEventListener('click', function(e){
+        e.preventDefault();
+        _this.addThreshold();
+      });
+    };
+
+    // initialize
+    this.loggingEnabled = false;
+    this.soundsEnabled  = false;
+    this.thresholdViews = [];
+
+    this.price = document.getElementById('price');
+    this.buy   = document.getElementById('buy');
+    this.sell  = document.getElementById('sell');
+    this.high  = document.getElementById('high');
+    this.last  = document.getElementById('last');
+    this.low   = document.getElementById('low');
+
+    this.depth  = document.getElementById('depth');
+    this.trades = document.getElementById('trades');
+
+    this.stopAlarmBtn     = document.getElementById('stop_alarm_btn');
+    this.setAlarmBtn      = document.getElementById('set_alarm_btn');
+    this.addThresholdBtn  = document.getElementById('add_threshold_btn');
+
+    this.sounds = {
+      profit: new Audio('assets/audio/profit.mp3'),
+      loss:   new Audio('assets/audio/loss.mp3')
+    };
+
+    this.addThreshold();
+    bindToDom();
 
     this.conn = io.connect('https://socketio.mtgox.com/mtgox?Currency=AUD');
 
