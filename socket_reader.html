@@ -27,17 +27,25 @@
     <div>
       <label>Volume:</label><span id='volume' />
     </div>
+
+    <div class='actions'>
+      <button id='stop_alarm_btn'>Stop Alarm</button>
+      <button id='set_alarm_btn'>Set Alarm</button>
+    </div>
   </header>
 
   <div class='marker'>
     <div>
-      <label>Buy At:</label>
-      <input id='marker_buy' value='200.00' />
+      <label>Loss Sell At:</label>
+      <input id='marker_loss' value='120.00' />
+      (avg)
     </div>
     <div>
-      <label>Sell At:</label>
-      <input id='marker_sell' value='0.00' />
+      <label>Profit Sell At:</label>
+      <input id='marker_profit' value='170.00' />
+      (avg)
     </div>
+    <a href='http://mtgoxlive.com/orders?currency=AUD' target='_chart'>Chart</a>
   </div>
 
   <div class='logs'>
@@ -53,7 +61,8 @@
   </div>
 
   <script type='text/javascript'>
-    monitor = TradeMonitor();
+    window.monitor   = TradeMonitor();
   </script>
+
 </body>
 </html>
