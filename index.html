@@ -66,39 +66,15 @@
 
     <h3>Sound Alarm when...</h3>
     <form class='marker form-horizontal'>
-      <div class='control-group'>
-        <label class="control-label">The Avg price Falls below:</label>
-        <div class='controls'>
-          <div class='input-prepend'>
-            <span class="add-on">$</span>
-            <input type='text' placeholder='AUD' id='marker_loss' value='120.00' />
-          </div>
-        </div>
-      </div>
+      <div id='thresholds'></div>
 
       <div class='control-group'>
-        <label class="control-label">The Avg price Rises above:</label>
-        <div class='controls'>
-          <div class='input-prepend'>
-            <span class="add-on">$</span>
-            <input type='text' placeholder='AUD' id='marker_profit' value='130.00' />
-          </div>
-        </div>
-      </div>
-
-      <div class='control-group'>
-        <div class='controls'>
-          <button class='btn' id='stop_alarm_btn'>Stop Alarm</button>
-          <button class='btn' id='set_alarm_btn'>Set Alarm</button>
-          <a href='http://mtgoxlive.com/orders?currency=AUD' target='_chart'>Chart</a>
-        </div>
+        <button id='add_threshold_btn' class='btn'>Add Threshold</button>
+        <button class='btn' id='stop_alarm_btn'>Stop Alarm</button>
+        <button class='btn' id='set_alarm_btn'>Set Alarm</button>
+        <a href='http://mtgoxlive.com/orders?currency=AUD' target='_chart'>Chart</a>
       </div>
     </form>
-
-    <div class='threshold-panel'>
-      <button id='add_threshold_btn' class='btn'>Add Threshold</button>
-      <div id='thresholds' />
-    </div>
 
     <div class='logs'>
       <div class='log'>

@@ -35,18 +35,25 @@
       return models;
     };
 
+    this.viewFor = function(threshold) {
+      for(var i=0; i < this.thresholdViews.length; i++) {
+        var v = this.thresholdViews[i];
+        if(v.model == threshold) return v;
+      }
+    };
+
     this.addThreshold = function() {
       var container = document.getElementById('thresholds');
-      var p = new PriceThreshold(this, OPERATION.lte, new PricePoint('avg', document.getElementById('marker_loss').value));
+      var p = new PriceThreshold(this, OPERATION.lte, new PricePoint('avg', 0));
       var v = new ThresholdView(p);
 
       this.thresholdViews.push(v);
-      container.appendChild(v.render().el);
-
-      p = new PriceThreshold(this, OPERATION.gte, new PricePoint('avg', document.getElementById('marker_profit').value));
-      v = new ThresholdView(p);
-
-      this.thresholdViews.push(v);
+      if(container.children.length) {
+        var conjunction = document.createElement('div');
+        conjunction.className = 'logical-or control-group';
+        conjunction.innerHTML = 'OR'
+        container.appendChild(conjunction);
+      }
       container.appendChild(v.render().el);
     };
 
@@ -116,10 +123,17 @@
     };
 
     var alertIfNecessary = function() {
+      if(!this.isAlarmSet()) return;
       var thresholds = this.thresholds();
-      thresholds.forEach(function (t) {
-        if(t.isMet()) this.playSound('loss');
-      });
+
+      for(var i = 0; i < thresholds.length; i++) {
+        var t = thresholds[i];
+        if(t.isMet()) {
+          this.playSound('loss');
+          this.viewFor(t).highlight();
+          return;
+        }
+      }
     };
 
     var bindToDom = function() {
