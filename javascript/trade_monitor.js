@@ -67,7 +67,8 @@
       var l = logEl.children.length;
 
       if(l >= 30) logEl.children[l - 1].remove();
-      logEl.innerHTML = "<li><label>" + title + "</label><span>" + message + "</span></li>" + logEl.innerHTML;
+      lbl = title == 'ask' ? 'info' : 'warning';
+      logEl.innerHTML = "<li><label class='label label-"+ lbl +"'>" + title + "</label><span>" + message + "</span></li>" + logEl.innerHTML;
     };
 
     var log = function() {

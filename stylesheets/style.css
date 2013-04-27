@@ -1,32 +1,11 @@
 body {
-  font-size: 10px;
+  padding-top: 140px;
 }
 
-header {
-  color:            white;
-  background-color: grey;
-  padding:          10px;
-  overflow:         hidden;
-  font-size:        16px;
-}
-
-header div {
-  float:  left;
-  margin: 0 10px;
-}
-
-label {
-  margin-right: 5px;
-  font-weight:  bold;
-  display:      inline-block;
-  width:        80px;
-}
-
-.current-chart {
-  margin-top: 30px;
-  width:      100%;
-  height:     400px;
-  border:     none;
+.summary-data span {
+  display:    inline-block;
+  min-width:  100px;
+  font-size:  12px;
 }
 
 .logs {
@@ -36,4 +15,10 @@ label {
 .log {
   float: left;
   width: 48%;
+}
+
+.log label {
+  display:      inline-block;
+  width:        50px;
+  margin-right: 5px;
 }
