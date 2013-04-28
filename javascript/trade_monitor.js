@@ -95,7 +95,6 @@
     var onMessage = function(data) {
       log('Message', arguments);
 
-      signalActivity(data.private);
       if(data.ticker) updateHeader(data);
       if(data.depth)  updateDepth(data);
       if(data.trade)  updateTrades(data);
@@ -114,6 +113,7 @@
         return '$' + amt + ' ' + data.trade.price_currency;
       };
 
+      signalActivity('trade');
       logTo(this.trades, data.trade.trade_type, format(data.trade.price));
     };
 
