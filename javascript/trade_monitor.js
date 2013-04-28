@@ -11,6 +11,7 @@
         this.sounds[snd].pause();
         this.sounds[snd].removeEventListener('ended', this.loop);
       }
+      $('.highlight').removeClass('highlight');
     };
 
     this.isAlarmSet = function () {
@@ -70,8 +71,16 @@
       console.log.apply(console, arguments);
     };
 
+    var signalActivity = function(msg, persistent) {
+      $('#activity-message').html(msg);
+      var activity = $('#activity-monitor').addClass('pulse');
+      if(persistent) return;
+      setTimeout(function() { activity.removeClass('pulse'); }, 200);
+    };
+
     var onConnect = function() {
       log('Connected', arguments);
+      signalActivity('connected');
     };
 
     var onDisconnect = function() {
@@ -80,11 +89,13 @@
 
     var onError = function() {
       log('Error', arguments);
+      signalActivity('error');
     };
 
     var onMessage = function(data) {
       log('Message', arguments);
 
+      signalActivity(data.private);
       if(data.ticker) updateHeader(data);
       if(data.depth)  updateDepth(data);
       if(data.trade)  updateTrades(data);
@@ -188,6 +199,7 @@
     this.addThreshold();
     bindToDom();
 
+    signalActivity('connecting', true);
     this.conn = io.connect('https://socketio.mtgox.com/mtgox?Currency=AUD');
 
     conn.on('connect',    onConnect);

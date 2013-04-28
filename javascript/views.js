@@ -6,6 +6,18 @@ var View = function() {
     this.el      = document.createElement(this.tagName);
   };
 
+  View.prototype.$ = function() {
+    var args = 1 <= arguments.length ? Array.prototype.slice.call(arguments, 0) : [];
+    args.push(this.el);
+    return $.apply(window, args);
+  };
+
+  View.prototype.remove = function() {
+    if(this.unbindEvents) this.unbindEvents();
+    this.el.remove();
+    delete this;
+  };
+
   View.prototype.render = function() {
     this.el.innerHTML = '';
     return this;
@@ -35,19 +47,18 @@ var ThresholdView = function() {
 
     return '\
       <div class="control-group">\
-        <span class="mark"></span> \
           The ' + dropdownFor(POINTS, threshold.pricePoint.point, 'points') +'\
           price is '    + dropdownFor(OPERATION, threshold.operation, 'operation')  +'\
           <div class="threshold-value input-prepend">\
             <span class="add-on">$</span>\
             <input type="text" placeholder="AUD" class="price_threshold" value="' + threshold.pricePoint.toString(false) +'" />\
           </div>\
+          <button class="delete btn">X</button>\
       </div>';
   };
 
   ThresholdView.prototype.highlight = function() {
-    var mark = this.el.querySelector('.mark');
-    mark.innerHTML = ' ** ';
+    var mark = this.$('.control-group').addClass('highlight');
   };
 
   ThresholdView.prototype.bindEvents = function() {
@@ -66,6 +77,11 @@ var ThresholdView = function() {
     this.el.querySelector('.operation').addEventListener('change', function() {
       var newOp = _this.el.querySelector('.operation').value;
       _this.model.operation = OPERATION[newOp];
+    });
+
+    this.el.querySelector('.delete.btn').addEventListener('click', function(e) {
+      e.preventDefault();
+      _this.remove();
     });
   };
 
