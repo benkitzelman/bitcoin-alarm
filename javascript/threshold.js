@@ -9,11 +9,11 @@ var POINTS = {
 };
 
 var OPERATION = {
-  eq: '==',
-  gt: '>',
-  lt: '<',
-  gte: '>=',
-  lte: '<=' 
+  eq: 'equals',
+  gt: 'is more than',
+  lt: 'is less than',
+  gte: 'is greater than or equal to',
+  lte: 'is less than or equal to' 
 };
 
 var Threshold = function() {
@@ -21,6 +21,15 @@ var Threshold = function() {
   function Threshold(monitor, operation) {
     this.monitor   = monitor;
     this.operation = operation || OPERATION.eq;
+  };
+
+  Threshold.prototype.child = function(child) {
+    if(child) this.next = child;
+    return this.next;
+  };
+
+  Threshold.prototype.hasChild = function() {
+    return !!this.next;
   };
 
   Threshold.prototype.compare = function(numberA, numberB) {
@@ -46,7 +55,8 @@ var Threshold = function() {
   };
 
   Threshold.prototype.isMet = function() {
-    return false;
+    if(this.hasChild()) return this.child().isMet();
+    return true;
   };
 
   return Threshold;
@@ -64,7 +74,7 @@ var PriceThreshold = function() {
   PriceThreshold.prototype.isMet = function() {
     var current;
     if(!this.monitor.ticker || !(current = this.monitor.ticker[this.pricePoint.point])) return false;
-    return this.compare(parseFloat(current.value), parseFloat(this.pricePoint.value));
+    return this.compare(parseFloat(current.value), parseFloat(this.pricePoint.value)) && Threshold.prototype.isMet.apply(this);
   };
 
   return PriceThreshold;

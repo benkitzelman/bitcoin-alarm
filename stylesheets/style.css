@@ -16,6 +16,10 @@ select.facet {
   width: 70px;
 }
 
+select.facet.operation {
+  width: 200px;
+}
+
 .highlight {
   background-color: #ffaaaa;
   border:           1px solid red;

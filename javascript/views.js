@@ -48,7 +48,7 @@ var ThresholdView = function() {
     return '\
       <div class="control-group">\
           The ' + dropdownFor(POINTS, threshold.pricePoint.point, 'points') +'\
-          price is '    + dropdownFor(OPERATION, threshold.operation, 'operation')  +'\
+          price '    + dropdownFor(OPERATION, threshold.operation, 'operation')  +'\
           <div class="threshold-value input-prepend">\
             <span class="add-on">$</span>\
             <input type="text" placeholder="AUD" class="price_threshold" value="' + threshold.pricePoint.toString(false) +'" />\
