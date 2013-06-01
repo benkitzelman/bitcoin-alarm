@@ -9,6 +9,5 @@ This is a real quick and dirty single page hack....
 
 TODO:
 ========
- - chain threshold criteria (logical ANDs)
  - tests
  - replace jquery - just use native js
